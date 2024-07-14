@@ -240,6 +240,7 @@ def load_data(dataset):
         # Save the labels, train, and test datasets for each label column
         for file in ['train', 'test', 'labels']:
             print('LABELS', labels)
+            print('Labels shape is',labels)
             np.save(os.path.join(folder, f'{file}.npy'), eval(file))
         
       
