@@ -13,7 +13,7 @@ lm_d = {
 		'WADI': [(0.99, 1), (0.999, 1)],
 		'MSDS': [(0.91, 1), (0.9, 1.04)],
 		'MBA': [(0.87, 1), (0.93, 1.04)],
-		'STRAIN': [(0.87, 1), (0.93, 1.04)]
+		'STRAIN': [(0.01, 1), (0.01, 1)]
 	}
 lm = lm_d[args.dataset][1 if 'TranAD' in args.model else 0]
 
@@ -29,7 +29,7 @@ lr_d = {
 		'UCR': 0.006, 
 		'NAB': 0.009, 
 		'MBA': 0.001, 
-		'STRAIN': 0.001
+		'STRAIN': 0.00001
 	}
 lr = lr_d[args.dataset]
 

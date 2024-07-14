@@ -22,28 +22,29 @@ def plotter(name, y_true, y_pred, ascore, labels):
     
     # Check the dimensions of y_true, y_pred, ascore, and labels
     print("y_true shape:", y_true.shape)
-   # print("y_pred shape:", y_pred.shape)
-  #  print("ascore shape:", ascore.shape)
-  #  print("labels shape:", labels.shape)
-   # print("Y PRED IS :",y_pred)
-    print("y TRUE IS :",y_true)
+    print("y TRUE IS :", y_true)
     for dim in range(10):
         if y_true.shape[1] <= dim or y_pred.shape[1] <= dim or labels.shape[1] <= dim or ascore.shape[1] <= dim:
             print(f"Skipping dimension {dim} due to insufficient size.")
             continue
         
-        y_t, y_p, l, a_s = y_true[:, dim], y_pred[:, dim], labels[:, dim], ascore[:, dim]
+        y_t, y_p, l, a_s = y_true[:, dim], y_pred[:, dim], labels[dim,:], ascore[:, dim]
         
         fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True)
         ax1.set_ylabel('Value')
-        ax1.set_title(f'Dimension = {dim}')
+    
+        
+        ax1.set_title(f'Dimension = {dim} ({labels[dim,:]})')
         
         ax1.plot(smooth(y_t), linewidth=0.2, label='True')
         ax1.plot(smooth(y_p), '-', alpha=0.6, linewidth=0.3, label='Predicted')
+        
         ax3 = ax1.twinx()
         ax3.plot(l, '--', linewidth=0.3, alpha=0.5)
         ax3.fill_between(np.arange(l.shape[0]), l, color='blue', alpha=0.3)
         if dim == 0: ax1.legend(ncol=2, bbox_to_anchor=(0.6, 1.02))
+        
+      
         ax2.plot(smooth(a_s), linewidth=0.2, color='g')
         ax2.set_xlabel('Timestamp')
         ax2.set_ylabel('Anomaly Score')

@@ -11,6 +11,8 @@ def calc_point2point(predict, actual):
         predict (np.ndarray): the predict label
         actual (np.ndarray): np.ndarray
     """
+    print('PREDICT IS :',predict)
+    print('ACTUAL IS :',actual)
     TP = np.sum(predict * actual)
     TN = np.sum((1 - predict) * (1 - actual))
     FP = np.sum(predict * (1 - actual))
@@ -25,54 +27,82 @@ def calc_point2point(predict, actual):
     return f1, precision, recall, TP, TN, FP, FN, roc_auc
 
 
-# the below function is taken from OmniAnomaly code base directly
-def adjust_predicts(score, label,
-                    threshold=None,
-                    pred=None,
-                    calc_latency=False):
+# The below function is taken from the OmniAnomaly code base directly
+def adjust_predicts(score, label, threshold=None, pred=None, calc_latency=False):
     """
     Calculate adjusted predict labels using given `score`, `threshold` (or given `pred`) and `label`.
+    
     Args:
         score (np.ndarray): The anomaly score
-        label (np.ndarray): The ground-truth label
+        label (np.ndarray): The ground-truth label (1 indicates an anomaly, 0 indicates no anomaly)
         threshold (float): The threshold of anomaly score.
-            A point is labeled as "anomaly" if its score is lower than the threshold.
-        pred (np.ndarray or None): if not None, adjust `pred` and ignore `score` and `threshold`,
-        calc_latency (bool):
+            A point is labeled as "anomaly" if its score is higher than the threshold.
+        pred (np.ndarray or None): If not None, adjust `pred` and ignore `score` and `threshold`
+        calc_latency (bool): Whether to calculate latency
+        
     Returns:
-        np.ndarray: predict labels
+        np.ndarray: Adjusted predict labels
     """
+    
+    # Ensure the score and label arrays have the same length
     if len(score) != len(label):
         raise ValueError("score and label must have the same length")
+    
+    # Convert score and label to numpy arrays
     score = np.asarray(score)
     label = np.asarray(label)
+    print('LABEL IN ADJUST PREDICTS IS', label)
+    
+    # Initialize latency counter
     latency = 0
+    
+    # Determine predict array based on threshold or provided prediction
     if pred is None:
+        # If pred is not provided, calculate it using the threshold
+        print('PRED IS NONE')
         predict = score > threshold
     else:
+        print('PRED IS PROVIDED')
+        # If pred is provided, use it directly
         predict = pred
-    actual = label > 0.1
+    
+    # Determine the actual anomaly points (label is 1 for anomaly)
+    actual = label == 1
     anomaly_state = False
     anomaly_count = 0
+    
+    # Iterate over each point in the score array
     for i in range(len(score)):
+        # If an actual anomaly and predicted anomaly are found and not already in an anomaly state
         if actual[i] and predict[i] and not anomaly_state:
-                anomaly_state = True
-                anomaly_count += 1
-                for j in range(i, 0, -1):
-                    if not actual[j]:
-                        break
-                    else:
-                        if not predict[j]:
-                            predict[j] = True
-                            latency += 1
+            anomaly_state = True
+            anomaly_count += 1
+            
+            # Backtrack to find the start of the anomaly
+            for j in range(i, 0, -1):
+                if not actual[j]:
+                    break
+                else:
+                    # Adjust the prediction for the backtracked points
+                    if not predict[j]:
+                        predict[j] = True
+                        latency += 1
+        # If no actual anomaly, reset the anomaly state
         elif not actual[i]:
             anomaly_state = False
+        
+        # Continue to predict anomaly while in an anomaly state
         if anomaly_state:
             predict[i] = True
+    
+    # Return the adjusted predictions and optionally the latency
     if calc_latency:
         return predict, latency / (anomaly_count + 1e-4)
     else:
         return predict
+
+
+
 
 
 def calc_seq(score, label, threshold, calc_latency=False):
