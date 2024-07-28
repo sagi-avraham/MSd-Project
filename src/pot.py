@@ -46,6 +46,10 @@ def adjust_predicts(score, label,
         raise ValueError("score and label must have the same length")
     score = np.asarray(score)
     label = np.asarray(label)
+    if np.any(label==1):
+        print('signal ')
+    else:
+        print('no signal')
     latency = 0
     if pred is None:
         predict = score > threshold

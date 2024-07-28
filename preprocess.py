@@ -224,11 +224,12 @@ def load_data(dataset):
         labels = pd.read_csv(os.path.join(dataset_folder, 'labels.csv'))
         train = pd.read_csv(os.path.join(dataset_folder, 'train.csv'))
         test = pd.read_csv(os.path.join(dataset_folder, 'test.csv'))
-    
+        testlabels=pd.read_csv(os.path.join(dataset_folder, 'test_labels.csv'))
         # Correct the assignment statement
-        train = train.values[1:, 1:].astype(float)
-        test = test.values[1:, 1:].astype(float)
-        labels = labels.values[1:, 1:].astype(float)
+        train = train.values[:, :].astype(float)
+        test = test.values[:, :].astype(float)
+        labels = labels.values[:, :].astype(float)
+        testlabels = testlabels.values[:, :].astype(float)
     
         train, min_a, max_a = normalize3(train)
         test, _, _ = normalize3(test, min_a, max_a)
@@ -242,7 +243,7 @@ def load_data(dataset):
             else:
                 print('no signal')
         # Save the labels, train, and test datasets for each label column
-        for file in ['train', 'test', 'labels']:
+        for file in ['train', 'test', 'labels','testlabels']:
             print('LABELS', labels)
             print('Labels shape is',labels)
             np.save(os.path.join(folder, f'{file}.npy'), eval(file))

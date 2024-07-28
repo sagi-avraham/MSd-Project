@@ -25,11 +25,12 @@ def convert_to_windows(data, model):
 	return torch.stack(windows)
 
 def load_dataset(dataset):
+	global testlabels
 	folder = os.path.join(output_folder, dataset)
 	if not os.path.exists(folder):
 		raise Exception('Processed Data not found.')
 	loader = []
-	for file in ['train', 'test', 'labels']:
+	for file in ['train', 'test', 'labels','testlabels']:
 		if dataset == 'SMD': file = 'machine-1-1_' + file
 		if dataset == 'SMAP': file = 'P-1_' + file
 		if dataset == 'MSL': file = 'C-1_' + file
@@ -41,9 +42,10 @@ def load_dataset(dataset):
 	train_loader = DataLoader(loader[0], batch_size=loader[0].shape[0])
 	test_loader = DataLoader(loader[1], batch_size=loader[1].shape[0])
 	labels = loader[2]
+	testlabels=loader[3]
 	print(test_loader)
 	print(test_loader)
-	print(labels)
+	print('testlabels@@@@@@@@@@@@',testlabels)
 	return train_loader, test_loader, labels
 
 def save_model(model, optimizer, scheduler, epoch, accuracy_list):
@@ -333,6 +335,7 @@ if __name__ == '__main__':
 		plot_accuracies(accuracy_list, f'{args.model}_{args.dataset}')
 
 	### Testing phase
+	label=testlabels
 	torch.zero_grad = True
 	model.eval()
 	print(f'{color.HEADER}Testing {args.model} on {args.dataset}{color.ENDC}')
@@ -377,9 +380,9 @@ if __name__ == '__main__':
 	
 	for i in range(loss.shape[1]):
 	    lt, l, ls = lossT[:, i], loss[:, i], labels[:, i]
-	    print('lossTshape is',lossT.shape)
-	    print('loss is',loss.shape)
-	    print('labels is',len(labels[:, i]))
+	    print(i)
+	   # print('loss is',loss.shape)
+	 #   print('labels is',len(labels[:, i]))
 	    result, pred = pot_eval(lt, l, ls)
 	
 	    if isinstance(result, dict):
