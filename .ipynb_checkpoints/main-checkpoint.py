@@ -43,11 +43,6 @@ def load_dataset(dataset):
 	test_loader = DataLoader(loader[1], batch_size=loader[1].shape[0])
 	labels = loader[2]
 	testlabels=loader[3]
-	for i in range(0,50):
-	    if np.any(testlabels[i:,]==1):
-	        print('signal')
-	    else:
-	        print('no signal')
 	print(test_loader)
 	print(test_loader)
 	print('testlabels@@@@@@@@@@@@',testlabels)
@@ -424,5 +419,6 @@ if __name__ == '__main__':
 	   # result.update(ndcg(loss, labels))
 		# print(df)
 	    print(result)
+	    print("\n")
 		# pprint(getresults2(df, result))
 		# beep(4)

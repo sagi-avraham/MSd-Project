@@ -419,5 +419,6 @@ if __name__ == '__main__':
 	   # result.update(ndcg(loss, labels))
 		# print(df)
 	    print(result)
+	    print("\n")
 		# pprint(getresults2(df, result))
 		# beep(4)
