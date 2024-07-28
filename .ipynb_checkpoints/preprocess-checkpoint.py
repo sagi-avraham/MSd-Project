@@ -236,7 +236,11 @@ def load_data(dataset):
         # Process each column in labels and normalize accordingly
         # for i, label_col in enumerate(labels.columns):
         # label_data = labels[label_col].values.astype(float).reshape(-1, 1)
-    
+        for i in range(0,50):
+            if np.any(labels[:,i:]==1):
+                print('signal')
+            else:
+                print('no signal')
         # Save the labels, train, and test datasets for each label column
         for file in ['train', 'test', 'labels']:
             print('LABELS', labels)

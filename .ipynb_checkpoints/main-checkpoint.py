@@ -324,7 +324,7 @@ if __name__ == '__main__':
 	### Training phase
 	if not args.test:
 		print(f'{color.HEADER}Training {args.model} on {args.dataset}{color.ENDC}')
-		num_epochs = 20; e = epoch + 1; start = time()
+		num_epochs = 3; e = epoch + 1; start = time()
 		for e in tqdm(list(range(epoch+1, epoch+num_epochs+1))):
 			lossT, lr = backprop(e, model, trainD, trainO, optimizer, scheduler)
 			accuracy_list.append((lossT, lr))
@@ -377,7 +377,9 @@ if __name__ == '__main__':
 	
 	for i in range(loss.shape[1]):
 	    lt, l, ls = lossT[:, i], loss[:, i], labels[:, i]
-	
+	    print('lossTshape is',lossT.shape)
+	    print('loss is',loss.shape)
+	    print('labels is',len(labels[:, i]))
 	    result, pred = pot_eval(lt, l, ls)
 	
 	    if isinstance(result, dict):
@@ -400,15 +402,18 @@ if __name__ == '__main__':
 	
 	    df = pd.concat([df, result_df], ignore_index=True)
 	
-	# preds = np.concatenate([i.reshape(-1, 1) + 0 for i in preds], axis=1)
-	# pd.DataFrame(preds, columns=[str(i) for i in range(10)]).to_csv('labels.csv')
-	print('END@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-	lossTfinal, lossFinal = np.mean(lossT, axis=1), np.mean(loss, axis=1)
-	labelsFinal = (np.sum(labels, axis=1) >= 1) + 0
-	result, _ = pot_eval(lossTfinal, lossFinal, labelsFinal)
-	result.update(hit_att(loss, labels))
-	result.update(ndcg(loss, labels))
-	# print(df)
-	pprint(result)
-	# pprint(getresults2(df, result))
-	# beep(4)
+		# preds = np.concatenate([i.reshape(-1, 1) + 0 for i in preds], axis=1)
+		# pd.DataFrame(preds, columns=[str(i) for i in range(10)]).to_csv('labels.csv')
+	    print('END@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+	    lossTfinal, lossFinal = np.mean(lossT, axis=1), np.mean(loss, axis=1)
+	    labelsFinal = (np.sum(labels, axis=1) >= 1) + 0
+       # print('lossTfinal is : ',lossTfinal.shape)
+     #   print('lossfina; is : ',lossFinal.shape)
+      #  print('labels final is : ',labelsFinal.shape)
+	  #  result, _ = pot_eval(lossTfinal, lossFinal, labelsFinal)
+	#    result.update(hit_att(loss, labels))
+	   # result.update(ndcg(loss, labels))
+		# print(df)
+	    print(result)
+		# pprint(getresults2(df, result))
+		# beep(4)

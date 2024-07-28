@@ -28,8 +28,8 @@ lr_d = {
 		'MSDS': 0.001, 
 		'UCR': 0.006, 
 		'NAB': 0.009, 
-		'MBA': 0.001, 
-		'STRAIN': 0.00001
+		'MBA': 0.01, 
+		'STRAIN': 0.01
 	}
 lr = lr_d[args.dataset]
 
@@ -45,7 +45,7 @@ percentiles = {
 		'UCR': (98, 2),
 		'NAB': (98, 2),
 		'MBA': (99, 2),
-		'STRAIN':(99,2)
+		'STRAIN':(9,300)
 	}
 percentile_merlin = percentiles[args.dataset][0]
 cvp = percentiles[args.dataset][1]
