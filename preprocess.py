@@ -238,7 +238,7 @@ def load_data(dataset):
         # for i, label_col in enumerate(labels.columns):
         # label_data = labels[label_col].values.astype(float).reshape(-1, 1)
         for i in range(0,50):
-            if np.any(labels[:,i]==1):
+            if np.any(testlabels[i]==1):
                 print('signal')
             else:
                 print('no signal')
