@@ -46,16 +46,23 @@ def adjust_predicts(score, label,
         raise ValueError("score and label must have the same length")
     score = np.asarray(score)
     label = np.asarray(label)
-    if np.any(label==1):
-        print('signal ')
-    else:
-        print('no signal')
+    #if np.any(label==1):
+       # print('signal ')
+    #else:
+        #print('no signal')
     latency = 0
     if pred is None:
-        predict = score > threshold
+        predict = score > 0.85
     else:
         predict = pred
+
     actual = label 
+    print('actual is',actual)
+    print('predict shape is',predict)
+    if np.any(predict==True):
+        print('signal')
+    else:
+        print('no signal')
     anomaly_state = False
     anomaly_count = 0
     for i in range(len(score)):

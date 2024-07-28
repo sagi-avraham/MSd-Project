@@ -43,11 +43,6 @@ def load_dataset(dataset):
 	test_loader = DataLoader(loader[1], batch_size=loader[1].shape[0])
 	labels = loader[2]
 	testlabels=loader[3]
-	for i in range(0,50):
-	    if np.any(testlabels[i:,]==1):
-	        print('signal')
-	    else:
-	        print('no signal')
 	print(test_loader)
 	print(test_loader)
 	print('testlabels@@@@@@@@@@@@',testlabels)
@@ -340,7 +335,8 @@ if __name__ == '__main__':
 		plot_accuracies(accuracy_list, f'{args.model}_{args.dataset}')
 
 	### Testing phase
-	label=testlabels
+	labels=testlabels.T
+	print('labels on 344 shape is',labels.shape)
 	torch.zero_grad = True
 	model.eval()
 	print(f'{color.HEADER}Testing {args.model} on {args.dataset}{color.ENDC}')

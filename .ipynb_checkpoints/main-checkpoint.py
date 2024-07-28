@@ -340,7 +340,8 @@ if __name__ == '__main__':
 		plot_accuracies(accuracy_list, f'{args.model}_{args.dataset}')
 
 	### Testing phase
-	label=testlabels
+	labels=testlabels.T
+	print('labels on 344 shape is',labels.shape)
 	torch.zero_grad = True
 	model.eval()
 	print(f'{color.HEADER}Testing {args.model} on {args.dataset}{color.ENDC}')
