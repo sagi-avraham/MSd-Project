@@ -52,14 +52,14 @@ def adjust_predicts(score, label,
         #print('no signal')
     latency = 0
     if pred is None:
-        predict = score > 0.85
+        predict = score > 8.8
     else:
         predict = pred
 
     actual = label 
     print('actual is',actual)
     print('predict shape is',predict)
-    if np.any(predict==True):
+    if np.any(actual==1):
         print('signal')
     else:
         print('no signal')
