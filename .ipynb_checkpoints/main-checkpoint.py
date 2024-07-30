@@ -9,11 +9,20 @@ from src.pot import *
 from src.utils import *
 from src.diagnosis import *
 from src.merlin import *
+from src.anomalyscores import *
 from torch.utils.data import Dataset, DataLoader, TensorDataset
 import torch.nn as nn
 from time import time
 from pprint import pprint
 # from beepy import beep
+import numpy as np
+from src.spot import SPOT
+from src.constants import *
+from sklearn.metrics import *
+import os
+
+
+
 
 def convert_to_windows(data, model):
 	windows = []; w_size = model.n_window
@@ -79,6 +88,8 @@ def load_model(modelname, dims):
 		print(f"{color.GREEN}Creating new model: {model.name}{color.ENDC}")
 		epoch = -1; accuracy_list = []
 	return model, optimizer, scheduler, epoch, accuracy_list
+
+
 
 def backprop(epoch, model, data, dataO, optimizer, scheduler, training = True):
 	l = nn.MSELoss(reduction = 'mean' if training else 'none')
@@ -291,6 +302,8 @@ def backprop(epoch, model, data, dataO, optimizer, scheduler, training = True):
 				z = model(window, elem)
 				if isinstance(z, tuple): z = z[1]
 			loss = l(z, elem)[0]
+			print('LOSS IS',loss)
+			print('LOSS IS',loss.shape)
 			return loss.detach().numpy(), z.detach().numpy()[0]
 	else:
 		print('DATA IN BACK PROP IS:',data)
@@ -352,6 +365,9 @@ if __name__ == '__main__':
 	### Scores
 	df = pd.DataFrame()
 	lossT, _ = backprop(0, model, trainD, trainO, optimizer, scheduler, training=False)
+	accumulated_scores = np.array([])
+	accumulated_noise_scores=np.array([])
+	noise_scores=np.array([])
 	for i in range(loss.shape[1]):
 	    lt, l, ls = lossT[:, i], loss[:, i], labels[:, i]
 	    #print("Loss T IS", lt.shape)
@@ -360,6 +376,17 @@ if __name__ == '__main__':
 	    #print(l)
 	    #print("Labels IS", ls.shape)
 	   # print(ls)
+	    #write_anomaly_to_file(score,label,file_path)
+	    updated_scores, noise_scores = pot_scores(lt, l, ls)
+        
+        # Flatten updated_scores if it's multidimensional
+	    #updated_scores = np.ravel(updated_scores)
+	    #noise_scores=np.ravel(noise_scores)
+        # Append the updated scores to the accumulated_scores array
+	    accumulated_scores = np.concatenate((accumulated_scores, updated_scores))
+	    #accumulated_noise_scores= np.concatenate((accumulated_noise_scores,test))
+	#    print('THE MIN TOP SCORE IS',min_top_score)
+	for i in range(loss.shape[1]):
 	    result, pred = pot_eval(lt, l, ls)
 	
 	    if isinstance(result, dict):
@@ -378,7 +405,6 @@ if __name__ == '__main__':
 	        raise ValueError("Unsupported type for result")
 	
 	    df = pd.concat([df, result_df], ignore_index=True)
-	
 	for i in range(loss.shape[1]):
 	    lt, l, ls = lossT[:, i], loss[:, i], labels[:, i]
 	    print(i)

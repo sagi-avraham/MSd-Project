@@ -21,12 +21,16 @@ def plotter(name, y_true, y_pred, ascore, labels):
     pdf = PdfPages(f'plots/{name}/output.pdf')
     
     # Check the dimensions of y_true, y_pred, ascore, and labels
-    print("y_true shape:", y_true.shape)
-    print("y TRUE IS :", y_true)
+    #print("y_true shape:", y_true.shape)
+    #print("y TRUE IS :", y_true)
     for dim in range(10):
         if y_true.shape[1] <= dim or y_pred.shape[1] <= dim or labels.shape[1] <= dim or ascore.shape[1] <= dim:
             print(f"Skipping dimension {dim} due to insufficient size.")
             continue
+        if np.any(labels[:,dim]==1):
+            signal="label : TRUE SIGNAL"
+        else:
+            signal="label : NO SIGNAL"
         
         y_t, y_p, l, a_s = y_true[:, dim], y_pred[:, dim], labels[dim,:], ascore[:, dim]
         
@@ -34,7 +38,7 @@ def plotter(name, y_true, y_pred, ascore, labels):
         ax1.set_ylabel('Value')
     
         
-        ax1.set_title(f'Dimension = {dim} ({labels[dim,:]})')
+        ax1.set_title(f'{signal}')
         
         ax1.plot(smooth(y_t), linewidth=0.2, label='True')
         ax1.plot(smooth(y_p), '-', alpha=0.6, linewidth=0.3, label='Predicted')
