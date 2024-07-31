@@ -339,7 +339,7 @@ if __name__ == '__main__':
 	### Training phase
 	if not args.test:
 		print(f'{color.HEADER}Training {args.model} on {args.dataset}{color.ENDC}')
-		num_epochs = 3; e = epoch + 1; start = time()
+		num_epochs = 5; e = epoch + 1; start = time()
 		for e in tqdm(list(range(epoch+1, epoch+num_epochs+1))):
 			lossT, lr = backprop(e, model, trainD, trainO, optimizer, scheduler)
 			accuracy_list.append((lossT, lr))
@@ -349,7 +349,7 @@ if __name__ == '__main__':
 
 	### Testing phase
 	labels=testlabels.T
-	print('labels on 344 shape is',labels.shape)
+	#print('labels on 344 shape is',labels.shape)
 	torch.zero_grad = True
 	model.eval()
 	print(f'{color.HEADER}Testing {args.model} on {args.dataset}{color.ENDC}')
@@ -368,6 +368,7 @@ if __name__ == '__main__':
 	accumulated_scores = np.array([])
 	accumulated_noise_scores=np.array([])
 	noise_scores=np.array([])
+	min_top_score=np.array([])
 	for i in range(loss.shape[1]):
 	    lt, l, ls = lossT[:, i], loss[:, i], labels[:, i]
 	    #print("Loss T IS", lt.shape)
@@ -377,7 +378,7 @@ if __name__ == '__main__':
 	    #print("Labels IS", ls.shape)
 	   # print(ls)
 	    #write_anomaly_to_file(score,label,file_path)
-	    updated_scores, noise_scores = pot_scores(lt, l, ls)
+	    updated_scores, noise_scores,min_top_score = pot_scores(lt, l, ls)
         
         # Flatten updated_scores if it's multidimensional
 	    #updated_scores = np.ravel(updated_scores)
@@ -386,8 +387,10 @@ if __name__ == '__main__':
 	    accumulated_scores = np.concatenate((accumulated_scores, updated_scores))
 	    #accumulated_noise_scores= np.concatenate((accumulated_noise_scores,test))
 	#    print('THE MIN TOP SCORE IS',min_top_score)
+	
+	
 	for i in range(loss.shape[1]):
-	    result, pred = pot_eval(lt, l, ls)
+	    result, pred = pot_eval(min_top_score,lt, l, ls)
 	
 	    if isinstance(result, dict):
 	        # Handle result if it's a dictionary
@@ -410,7 +413,7 @@ if __name__ == '__main__':
 	    print(i)
 	   # print('loss is',loss.shape)
 	 #   print('labels is',len(labels[:, i]))
-	    result, pred = pot_eval(lt, l, ls)
+	    result, pred = pot_eval(min_top_score,lt, l, ls)
 	
 	    if isinstance(result, dict):
 	       # print('its dict')
@@ -448,3 +451,5 @@ if __name__ == '__main__':
 	    print("\n")
 		# pprint(getresults2(df, result))
 		# beep(4)
+	print(len(noise_scores))
+	print(min_top_score)

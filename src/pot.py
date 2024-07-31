@@ -8,7 +8,7 @@ import os
 
 
 
-def adjust_predicts(score, label,
+def adjust_predicts(min_top_score,score, label,
                     threshold=None,
                     pred=None,
                     calc_latency=False):
@@ -30,7 +30,8 @@ def adjust_predicts(score, label,
     label = np.asarray(label)
     latency = 0
     if pred is None:
-        predict = score > 1
+        predict = score > min_top_score
+        print('min top score is',min_top_score)
     else:
         predict = pred
 
@@ -131,7 +132,7 @@ def bf_search(score, label, start, end=None, step_num=1, display_freq=1, verbose
     return m, m_t
 
 
-def pot_eval(init_score, score, label, q=1e-5, level=0.02):
+def pot_eval(min_top_score,init_score, score, label, q=1e-5, level=0.02):
     """
     Run POT method on given score.
     Args:
@@ -162,7 +163,7 @@ def pot_eval(init_score, score, label, q=1e-5, level=0.02):
     # np.percentile(score, 100 * lm[0])
     
     #print('THE LOWEST VALUE IN TOP PERCENTIL IS',lowest_value_in_top_percentile)
-    pred, p_latency = adjust_predicts(score, label, pot_th, calc_latency=True)
+    pred, p_latency = adjust_predicts(min_top_score,score, label, pot_th, calc_latency=True)
     # DEBUG - np.save(f'{debug}.npy', np.array(pred))
     # DEBUG - print(np.argwhere(np.array(pred)))
     p_t = calc_point2point(pred, label)

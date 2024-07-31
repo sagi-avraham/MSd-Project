@@ -25,7 +25,7 @@ def pot_scores(init_score, score, label, q=1e-5, level=0.02):
     """
     print('Testing POT method...')
 
-    fraction = 0.01  # Define the fraction of top scores to consider
+    fraction = 0.0001  # Define the fraction of top scores to consider
     lms = lm[0]  # Assuming lm is defined in src.constants
     
     while True:
@@ -71,4 +71,4 @@ def pot_scores(init_score, score, label, q=1e-5, level=0.02):
 
     print('Scores array length is', len(scores_array))
     
-    return score, scores_array
+    return score, scores_array,min_top_score
